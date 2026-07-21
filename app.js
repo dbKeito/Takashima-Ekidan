@@ -4510,7 +4510,7 @@ function showSettingsView() {
 function showAPIConfigView() {
   const page = $('#mine-page');
   const currentKey = AI_CONFIG.apiKey || '';
-  const currentModel = AI_CONFIG.model || 'glm-4';
+  const currentModel = AI_CONFIG.model || 'glm-4-flash';
   const currentFallback = AI_CONFIG.fallbackModel || 'glm-4.7-flash';
   const currentEndpoint = AI_CONFIG.endpoint || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
   page.innerHTML = `
@@ -4530,11 +4530,11 @@ function showAPIConfigView() {
       <div style="margin-bottom:var(--sp-4)">
         <label style="display:block;font-size:var(--fs-sm);color:var(--text-sub);margin-bottom:var(--sp-2)">主模型（优先使用）</label>
         <select id="api-model-input" class="ly-input" style="width:100%;font-size:var(--fs-sm)">
+          <option value="glm-4-flash" ${currentModel === 'glm-4-flash' ? 'selected' : ''}>GLM-4-FLASH（免费·推荐）</option>
           <option value="glm-5.2" ${currentModel === 'glm-5.2' ? 'selected' : ''}>GLM-5.2（高质量）</option>
           <option value="glm-4" ${currentModel === 'glm-4' ? 'selected' : ''}>GLM-4（平衡）</option>
           <option value="glm-4.7-flash" ${currentModel === 'glm-4.7-flash' ? 'selected' : ''}>GLM-4.7-FLASH（免费）</option>
           <option value="glm-4.7-plus" ${currentModel === 'glm-4.7-plus' ? 'selected' : ''}>GLM-4.7-PLUS</option>
-          <option value="glm-4-flash" ${currentModel === 'glm-4-flash' ? 'selected' : ''}>GLM-4-FLASH（免费）</option>
         </select>
       </div>
       <div style="margin-bottom:var(--sp-4)">
@@ -4576,7 +4576,7 @@ function showAPIConfigView() {
 
 function saveAPIConfigFromForm() {
   const apiKey = document.getElementById('api-key-input')?.value.trim() || '';
-  const model = document.getElementById('api-model-input')?.value.trim() || 'glm-4';
+  const model = document.getElementById('api-model-input')?.value.trim() || 'glm-4-flash';
   const fallbackModel = document.getElementById('api-fallback-input')?.value.trim() || '';
   const endpoint = document.getElementById('api-endpoint-input')?.value.trim() || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
   if (!apiKey) {
@@ -4591,7 +4591,7 @@ function saveAPIConfigFromForm() {
 function clearAIConfig() {
   localStorage.removeItem('yijing_ai_config');
   AI_CONFIG.apiKey = '8a5296d524764cebadea0478e8df8d02.MF3Dce5QdZUDTI0I';
-  AI_CONFIG.model = 'glm-4';
+  AI_CONFIG.model = 'glm-4-flash';
   AI_CONFIG.fallbackModel = 'glm-4.7-flash';
   AI_CONFIG.endpoint = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
   toast('已重置为默认配置');
@@ -4600,7 +4600,7 @@ function clearAIConfig() {
 
 async function testAIDefault() {
   const apiKey = document.getElementById('api-key-input')?.value.trim() || '';
-  const model = document.getElementById('api-model-input')?.value.trim() || 'glm-4';
+  const model = document.getElementById('api-model-input')?.value.trim() || 'glm-4-flash';
   const fallbackModel = document.getElementById('api-fallback-input')?.value.trim() || '';
   const endpoint = document.getElementById('api-endpoint-input')?.value.trim() || 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
   if (!apiKey) {
@@ -6405,7 +6405,7 @@ function applyCollapseStates() {
 const AI_CONFIG = {
   endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
   apiKey: '8a5296d524764cebadea0478e8df8d02.MF3Dce5QdZUDTI0I',
-  model: 'glm-4',
+  model: 'glm-4-flash',
   fallbackModel: 'glm-4.7-flash',
   timeout: 60000,
   systemPrompt: '你是一位精通《易经》和高岛易断的占卜师。请根据用户的问题和卦象，结合高岛吞象的断卦风格，用通俗易懂且富有哲理的语言给出个性化解卦建议。\n\n要求：\n1. 先简要分析卦象整体含义\n2. 结合用户的具体问题进行针对性解读\n3. 参考动爻爻辞和高岛注解给出占断\n4. 给出切实可行的建议\n5. 语气温和但坚定，既有易理深度又接地气\n6. 回复请分段，用中文，控制在400字以内。',
