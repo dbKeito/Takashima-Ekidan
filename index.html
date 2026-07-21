@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>易经占卜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.cn" />
+  <link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin />
+  <link href="https://fonts.googleapis.cn/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ============================================================
+       STEP 1 — 问题输入页
+       ============================================================ -->
+  <section class="view active" id="step1">
+    <div class="page s1-page">
+      <div class="step-header">
+        <div class="back-btn" onclick="goHome()" style="visibility:hidden">‹ 返回</div>
+        <span class="step-page-num">1 / 4</span>
+      </div>
+
+      <h1 class="s1-title">你为何而来？</h1>
+      <p class="s1-sub">写下你心中的问题，越具体越能得到贴近的启发</p>
+
+      <!-- 今日卦象 -->
+      <div class="today-hex" id="today-hex" onclick="openTodayHex()">
+        <div class="th-label">今日卦象</div>
+        <div class="th-icon" id="th-icon"></div>
+        <div class="th-name" id="th-name"></div>
+        <div class="th-read" id="th-read"></div>
+      </div>
+
+      <!-- 问题文本框 -->
+      <div class="q-field">
+        <div class="textarea-wrap">
+          <textarea id="question-input" placeholder="例如：转岗到产品部是否利于我的职业发展？" maxlength="200"></textarea>
+        </div>
+        <div class="q-footer">
+          <span class="q-hint" onclick="toggleExamples()">不知道怎么问？看看示例</span>
+          <span class="q-count"><span id="char-count">0</span> / 200</span>
+        </div>
+      </div>
+
+      <!-- 占卜说明 -->
+      <div class="examples" id="examples" style="display:none">
+        <div class="ex-label">占卜说明</div>
+        <div class="ex-card ex-info-card">
+          <div class="ex-info-title">如何提问</div>
+          <div class="ex-info-text">问题越具体，卦象解读越精准。建议包含时间、人物、事件三要素，如"未来三个月转岗到产品部是否利于发展？"</div>
+        </div>
+        <div class="ex-card ex-info-card">
+          <div class="ex-info-title">起卦方式</div>
+          <div class="ex-info-text">支持手动掷币（三枚铜钱摇六爻）、数字起卦（念三数定卦）、时间起卦等多种方式，可在排盘页选择。</div>
+        </div>
+        <div class="ex-card ex-info-card">
+          <div class="ex-info-title">结果解读</div>
+          <div class="ex-info-text">解卦后呈现本卦/变卦、卦辞大象、纳甲六亲六神排盘、场景化解读。动爻决定变卦走向。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 开始卜卦固定按钮（常驻底部菜单栏上方） -->
+  <div class="start-footer show" id="start-footer">
+    <button class="btn-main btn--gold-fill" onclick="goStep2()">开始卜卦</button>
+  </div>
+
+
+  <!-- ============================================================
+       STEP 2 — 静心凝神 · 涟漪仪式（自动播放，现实占卦时间）
+       ============================================================ -->
+  <section class="view" id="step2" style="display:none">
+    <div class="ritual-page" onclick="skipRitual()">
+      <span class="step-page-num ritual-step-num">2 / 4</span>
+
+      <h2 class="r-title">请静心凝神</h2>
+      <p class="r-sub">现在请取出你的签具，在现实中完成起卦</p>
+      <div class="r-audio" onclick="event.stopPropagation(); toggleRitualMusic()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span id="ritual-audio-text">静心 · 冥想音 · 点击播放</span>
+      </div></audio>
+
+      <!-- 涟漪舞台 -->
+      <div class="ripple-stage" id="ripple-stage">
+        <div class="static-rings" id="static-rings">
+          <div class="sr"></div><div class="sr"></div><div class="sr"></div><div class="sr"></div>
+        </div>
+        <div class="rippling" id="rippling-rings" style="display:none">
+          <div class="ripple-ring"></div><div class="ripple-ring"></div>
+          <div class="ripple-ring"></div><div class="ripple-ring"></div>
+        </div>
+        <div class="ripple-core" id="ripple-core"></div>
+      </div>
+
+      <p class="ritual-tap-hint">轻触屏幕任意处 · 完成起卦并继续 ›</p>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STEP 3 — 填写卦象（高岛易断：现实起卦后录入结果）
+       ============================================================ -->
+  <section class="view" id="step3" style="display:none">
+    <div class="page cast-area">
+      <div class="ca-header">
+        <div></div>
+        <span class="ca-step-num">3 / 4</span>
+      </div>
+
+      <h2 class="ca-title">录入卦象</h2>
+
+      <!-- 子模式切换：选卦象 / 输数字 -->
+      <div class="ly-modes" style="margin-bottom:var(--sp-4)">
+        <div class="ly-mode-btn active" data-gm="num" onclick="switchGaoMode('num')">数字</div>
+        <div class="ly-mode-btn" data-gm="pick" onclick="switchGaoMode('pick')">卦象</div>
+      </div>
+
+      <!-- 选卦象面板 -->
+      <div id="gao-panel-pick" style="display:none">
+        <!-- 上卦选择 -->
+        <div class="hex-select-group">
+          <label class="hs-label">上卦（外卦）</label>
+          <div class="hex-select-grid" id="select-upper">
+            <div class="hs-item" data-t="乾" onclick="selectTrigram('upper','乾')"><span class="hs-icon">☰</span><span>乾</span></div>
+            <div class="hs-item" data-t="兑" onclick="selectTrigram('upper','兑')"><span class="hs-icon">☱</span><span>兑</span></div>
+            <div class="hs-item" data-t="离" onclick="selectTrigram('upper','离')"><span class="hs-icon">☲</span><span>离</span></div>
+            <div class="hs-item" data-t="震" onclick="selectTrigram('upper','震')"><span class="hs-icon">☳</span><span>震</span></div>
+            <div class="hs-item" data-t="巽" onclick="selectTrigram('upper','巽')"><span class="hs-icon">☴</span><span>巽</span></div>
+            <div class="hs-item" data-t="坎" onclick="selectTrigram('upper','坎')"><span class="hs-icon">☵</span><span>坎</span></div>
+            <div class="hs-item" data-t="艮" onclick="selectTrigram('upper','艮')"><span class="hs-icon">☶</span><span>艮</span></div>
+            <div class="hs-item" data-t="坤" onclick="selectTrigram('upper','坤')"><span class="hs-icon">☷</span><span>坤</span></div>
+          </div>
+        </div>
+
+        <!-- 下卦选择 -->
+        <div class="hex-select-group">
+          <label class="hs-label">下卦（内卦）</label>
+          <div class="hex-select-grid" id="select-lower">
+            <div class="hs-item" data-t="乾" onclick="selectTrigram('lower','乾')"><span class="hs-icon">☰</span><span>乾</span></div>
+            <div class="hs-item" data-t="兑" onclick="selectTrigram('lower','兑')"><span class="hs-icon">☱</span><span>兑</span></div>
+            <div class="hs-item" data-t="离" onclick="selectTrigram('lower','离')"><span class="hs-icon">☲</span><span>离</span></div>
+            <div class="hs-item" data-t="震" onclick="selectTrigram('lower','震')"><span class="hs-icon">☳</span><span>震</span></div>
+            <div class="hs-item" data-t="巽" onclick="selectTrigram('lower','巽')"><span class="hs-icon">☴</span><span>巽</span></div>
+            <div class="hs-item" data-t="坎" onclick="selectTrigram('lower','坎')"><span class="hs-icon">☵</span><span>坎</span></div>
+            <div class="hs-item" data-t="艮" onclick="selectTrigram('lower','艮')"><span class="hs-icon">☶</span><span>艮</span></div>
+            <div class="hs-item" data-t="坤" onclick="selectTrigram('lower','坤')"><span class="hs-icon">☷</span><span>坤</span></div>
+          </div>
+        </div>
+
+        <!-- 动爻选择 -->
+        <div class="move-group">
+          <label class="hs-label">动爻（可变之爻）</label>
+          <div class="move-row">
+            <div class="my-item" data-y="1" onclick="selectMoveYao(1)">初爻</div>
+            <div class="my-item" data-y="2" onclick="selectMoveYao(2)">二爻</div>
+            <div class="my-item" data-y="3" onclick="selectMoveYao(3)">三爻</div>
+            <div class="my-item" data-y="4" onclick="selectMoveYao(4)">四爻</div>
+            <div class="my-item" data-y="5" onclick="selectMoveYao(5)">五爻</div>
+            <div class="my-item" data-y="6" onclick="selectMoveYao(6)">上爻</div>
+            <div class="my-item selected" data-y="0" onclick="selectMoveYao(0)">静卦</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 输数字面板 -->
+      <div id="gao-panel-num">
+        <div class="num-grid" id="gao-num-grid">
+          <input class="num-input" inputmode="numeric" placeholder="上卦" maxlength="1" oninput="numJump(this,1);validateNum(this,1)" onkeydown="numJumpBack(event,this,1)" />
+          <input class="num-input" inputmode="numeric" placeholder="下卦" maxlength="1" oninput="numJump(this,2);validateNum(this,2)" onkeydown="numJumpBack(event,this,2)" />
+          <input class="num-input" inputmode="numeric" placeholder="动爻" maxlength="1" oninput="numJump(this,3);validateNum(this,3)" onkeydown="numJumpBack(event,this,3)" />
+        </div>
+        <div class="num-hint">前两数除八取余定本卦，第三数除六取余定动爻</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 解卦固定按钮（常驻底部菜单栏上方） -->
+  <div class="cast-footer" id="cast-footer">
+    <button class="btn-main btn--gold-fill" id="btn-resolve-gaodao" onclick="resolveGaodaoCast()" disabled>请输入上卦和下卦内容</button>
+  </div>
+
+
+  <!-- ============================================================
+       STEP 4 — 解卦结果
+       ============================================================ -->
+  <section class="view" id="step4" style="display:none">
+    <div class="page result-area" id="result-page">
+      <!-- 动态填充 -->
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STEP 5 — 六爻排盘
+       ============================================================ -->
+  <section class="view" id="step5" style="display:none">
+    <div class="page result-area" id="liuyao-page">
+      <!-- 动态填充 -->
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STEP 6 — 典籍
+       ============================================================ -->
+  <section class="view" id="step6" style="display:none">
+    <div class="page result-area" id="lore-page">
+      <!-- 动态填充 -->
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STEP 7 — 我的
+       ============================================================ -->
+  <section class="view" id="step7" style="display:none">
+    <div class="page result-area" id="mine-page">
+      <!-- 动态填充 -->
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       底部 Tab 分类栏（4 Tab）
+       ============================================================ -->
+  <nav class="tabbar">
+    <div class="tab active" data-tab="home" onclick="switchTab('home')">
+      <div class="t-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 2a10 10 0 0 1 0 20 5 5 0 0 1 0-10 5 5 0 0 0 0-10z"/>
+          <circle cx="12" cy="7" r="1.6"/>
+          <circle cx="12" cy="17" r="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <span>占卜</span>
+    </div>
+    <div class="tab" data-tab="liuyao" onclick="switchTab('liuyao')">
+      <div class="t-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="4" y1="4" x2="20" y2="4"/>
+          <line x1="4" y1="8" x2="10" y2="8"/>
+          <line x1="14" y1="8" x2="20" y2="8"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="16" x2="10" y2="16"/>
+          <line x1="14" y1="16" x2="20" y2="16"/>
+          <line x1="4" y1="20" x2="20" y2="20"/>
+        </svg>
+      </div>
+      <span>六爻</span>
+    </div>
+    <div class="tab" data-tab="lore" onclick="switchTab('lore')">
+      <div class="t-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <span>典籍</span>
+    </div>
+    <div class="tab" data-tab="mine" onclick="switchTab('mine')">
+      <div class="t-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <span>我的</span>
+    </div>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="guide-overlay hidden" id="guide-overlay">
+    <div class="guide-mask" id="guide-mask"></div>
+    <div class="guide-highlight" id="guide-highlight"></div>
+    <div class="guide-tooltip" id="guide-tooltip">
+      <div class="guide-tooltip-text" id="guide-tooltip-text"></div>
+      <div class="guide-tooltip-actions">
+        <button class="guide-skip" onclick="skipGuide()">跳过引导</button>
+        <button class="guide-next hidden" id="guide-next-btn" onclick="handleGuideBtnClick()">知道啦</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js?v=2"></script>
+</body>
+</html>
