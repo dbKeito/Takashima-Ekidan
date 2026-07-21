@@ -2637,25 +2637,27 @@ $$('#gao-num-grid .num-input').forEach(inp => {
 let _keyboardActive = false;
 function onKeyboard(show) {
   _keyboardActive = show;
+  const BASE_OFFSET = 110; // px above tabbar
   const apply = () => {
     const sf = $('#start-footer'), cf = $('#cast-footer');
+    if (!show) {
+      if (sf && sf.classList.contains('show')) sf.style.bottom = '';
+      if (cf && cf.classList.contains('show')) cf.style.bottom = '';
+      return;
+    }
     if (!window.visualViewport) return;
     const vh = window.visualViewport.height;
     const wh = window.innerHeight;
     // overlay 模式：布局视口不变，键盘高度 = wh - vh，需把按钮抬到键盘上方
     // resize 模式（多数安卓）：布局视口已随键盘整体上移，wh≈vh，无需额外补偿
     const kb = wh - vh;
-    const offset = kb > 1 ? kb + 8 : 8;
+    // 键盘弹起时按钮不得低于菜单栏上方安全距离（BASE_OFFSET），避免被菜单栏遮挡
+    const offset = Math.max(BASE_OFFSET, kb > 1 ? kb + 8 : BASE_OFFSET);
     const newBot = `calc(env(safe-area-inset-bottom) + ${offset}px)`;
     if (sf && sf.classList.contains('show')) sf.style.bottom = newBot;
     if (cf && cf.classList.contains('show')) cf.style.bottom = newBot;
   };
-  if (!show) {
-    const sf = $('#start-footer'), cf = $('#cast-footer');
-    if (sf && sf.classList.contains('show')) sf.style.bottom = '';
-    if (cf && cf.classList.contains('show')) cf.style.bottom = '';
-    return;
-  }
+  apply();
   requestAnimationFrame(apply);
   setTimeout(apply, 300); // 键盘弹出带动画，滞后补偿一次
 }
