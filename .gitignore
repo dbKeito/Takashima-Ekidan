@@ -1,0 +1,10 @@
+# WorkBuddy
+.workbuddy/
+
+# 生成文件
+index-standalone.html
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.log
