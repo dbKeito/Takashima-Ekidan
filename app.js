@@ -2638,6 +2638,7 @@ let _keyboardActive = false;
 function onKeyboard(show) {
   _keyboardActive = show;
   const BASE_OFFSET = 110; // px above tabbar
+  const KBD_THRESHOLD = 120; // 小于此高度的视口变化视为桌面端抖动/地址栏收起，不算真键盘
   const apply = () => {
     const sf = $('#start-footer'), cf = $('#cast-footer');
     if (!show) {
@@ -2651,8 +2652,9 @@ function onKeyboard(show) {
     // overlay 模式：布局视口不变，键盘高度 = wh - vh，需把按钮抬到键盘上方
     // resize 模式（多数安卓）：布局视口已随键盘整体上移，wh≈vh，无需额外补偿
     const kb = wh - vh;
-    // 键盘弹起时按钮不得低于菜单栏上方安全距离（BASE_OFFSET），避免被菜单栏遮挡
-    const offset = Math.max(BASE_OFFSET, kb > 1 ? kb + 8 : BASE_OFFSET);
+    // 只有键盘高度明显高于阈值（>120px，真实移动端软键盘）才抬升按钮；
+    // 否则保持默认位置，避免桌面端点击输入框时 viewport 微小抖动导致按钮下沉到菜单栏后
+    const offset = kb > KBD_THRESHOLD ? kb + 8 : BASE_OFFSET;
     const newBot = `calc(env(safe-area-inset-bottom) + ${offset}px)`;
     if (sf && sf.classList.contains('show')) sf.style.bottom = newBot;
     if (cf && cf.classList.contains('show')) cf.style.bottom = newBot;
