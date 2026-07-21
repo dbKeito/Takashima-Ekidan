@@ -999,14 +999,14 @@ body {
 /* 首页固定「开始卜卦」按钮：常驻于底部菜单栏上方 */
 .start-footer {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 92px);
+  bottom: calc(env(safe-area-inset-bottom) + 100px);
   left: 0; right: 0;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   padding: 0 clamp(16px, 5vw, 22px);
   box-sizing: border-box;
-  z-index: 41;
+  z-index: 39;
   display: none;
   transition: bottom 0.3s var(--ease-out);
 }
@@ -1016,14 +1016,14 @@ body {
 /* Step 3 解卦固定按钮（与首页同位置，满宽、贴菜单栏上方） */
 .cast-footer {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 92px);
+  bottom: calc(env(safe-area-inset-bottom) + 100px);
   left: 0; right: 0;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   padding: 0 clamp(16px, 5vw, 22px);
   box-sizing: border-box;
-  z-index: 41;
+  z-index: 39;
   display: none;
   transition: bottom 0.3s var(--ease-out);
 }
